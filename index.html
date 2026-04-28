@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUD: Räume für jeden | Interventionsmatrix</title>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-red: #ff003c;
+            --neon-green: #05ffa1;
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 25, 0.8);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--neon-blue);
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(0, 242, 255, 0.1) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+
+        /* --- Header / HUD Info --- */
+        header {
+            padding: 20px;
+            border-bottom: 2px solid var(--neon-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .team-info h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .slogan {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            margin-top: 5px;
+        }
+
+        .partner-info {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        /* --- Matrix Grid --- */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .intervention-card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            height: 150px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intervention-card:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+            transform: translateY(-5px);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        .card-id {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .card-status {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            padding: 2px 5px;
+            display: inline-block;
+            border-radius: 3px;
+        }
+
+        /* --- Status Styles --- */
+        .status-active { color: var(--neon-green); border: 1px solid var(--neon-green); }
+        .status-rejected { color: var(--neon-red); border: 1px solid var(--neon-red); }
+        .status-illegal { background: var(--neon-red); color: white; animation: flash 1s infinite; }
+        .status-pending { color: #555; border: 1px solid #555; }
+
+        @keyframes flash {
+            0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
+        }
+
+        /* --- Glitch Effect for Placeholders --- */
+        .placeholder {
+            filter: grayscale(1);
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .placeholder:hover {
+            filter: none;
+            opacity: 0.7;
+        }
+
+        /* --- Terminal Decor --- */
+        .terminal-overlay {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--neon-green);
+            padding: 10px;
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            pointer-events: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="team-info">
+        <h1>RÄUME FÜR JEDEN</h1>
+        <div class="slogan">IMMERSIV // INTERAKTIV // INKLUSIV</div>
+    </div>
+    <div class="partner-info">
+        PROJEKTPARTNER: <strong>CJD BERLIN</strong><br>
+        SYSTEM_DECONSTRUCTION_MODE: ON
+    </div>
+</header>
+
+<div class="matrix-container" id="matrix">
+    <a href="los_wochos_hallal.html" class="intervention-card">
+        <div class="card-id">INT_ID: 01</div>
+        <div class="card-title">Halal-Wochen (Los Wochos)</div>
+        <div><span class="card-status status-rejected">VERWORFEN (Risiko)</span></div>
+    </a>
+
+    <a href="infrarot_jammer.html" class="intervention-card">
+        <div class="card-id">INT_ID: 02</div>
+        <div class="card-title">The Jammer (Handy-Block)</div>
+        <div><span class="card-status status-illegal">STATUS: ILLEGAL</span></div>
+    </a>
+
+    <a href="mockumentary.html" class="intervention-card">
+        <div class="card-id">INT_ID: 03</div>
+        <div class="card-title">Mockumentary</div>
+        <div><span class="card-status status-active">AKTIV / PROD</span></div>
+    </a>
+
+    <script>
+        const matrix = document.getElementById('matrix');
+        for (let i = 4; i <= 20; i++) {
+            const id = i < 10 ? '0' + i : i;
+            const card = document.createElement('div');
+            card.className = 'intervention-card placeholder';
+            card.innerHTML = `
+                <div class="card-id">INT_ID: ${id}</div>
+                <div class="card-title">DEKONSTRUKTION_CORE_${id}</div>
+                <div><span class="card-status status-pending">PENDING...</span></div>
+            `;
+            matrix.appendChild(card);
+        }
+    </script>
+</div>
+
+<div class="terminal-overlay">
+    > LOADING INTERVENTION_MATRIX...<br>
+    > SYST_LOG: Vibe coding initiated.<br>
+    > USER: Räume für Jeden Team<br>
+    > STATUS: 3/20 Ideas loaded.
+</div>
+
+<footer>
+    &copy; 2026 INTERV_MATRIX // BHT Berlin x CJD // DECONSTRUCTING SYSTEM LOGICS
+</footer>
+
+</body>
+</html>
